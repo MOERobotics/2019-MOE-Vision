@@ -1,0 +1,10 @@
+gocv.io/x/gocv v0.18.0 h1:uW6C5ZjvEZjW+SwHtObmIWH73xNSsUXtSR26+k7OHpA=
+gocv.io/x/gocv v0.18.0/go.mod h1:3qacsKAMRS0sZmeLySWcbFeVEU3t86igWaQleAgiuBg=
+golang.org/x/exp v0.0.0-20180321215751-8460e604b9de/go.mod h1:CJ0aWSM057203Lf6IL+f9T1iT9GByDxfZKAQTCR3kQA=
+golang.org/x/exp v0.0.0-20190125153040-c74c464bbbf2 h1:y102fOLFqhV41b+4GPiJoa0k/x+pJcEi2/HB1Y5T6fU=
+golang.org/x/exp v0.0.0-20190125153040-c74c464bbbf2/go.mod h1:CJ0aWSM057203Lf6IL+f9T1iT9GByDxfZKAQTCR3kQA=
+golang.org/x/tools v0.0.0-20180525024113-a5b4c53f6e8b/go.mod h1:n7NCudcB/nEzxVGmLbDWY5pfWTLqBcC2KZ6jyYvM4mQ=
+golang.org/x/tools v0.0.0-20190125232054-d66bd3c5d5a6 h1:iZgcI2DDp6zW5v9Z/5+f0NuqoxNdmzg4hivjk2WLXpY=
+golang.org/x/tools v0.0.0-20190125232054-d66bd3c5d5a6/go.mod h1:n7NCudcB/nEzxVGmLbDWY5pfWTLqBcC2KZ6jyYvM4mQ=
+gonum.org/v1/gonum v0.0.0-20190127100148-95e6ef158424 h1:BZOXPRXfaB+GUgbdTHslaN2LGOWkLQQz9z/lMNRmOKY=
+gonum.org/v1/gonum v0.0.0-20190127100148-95e6ef158424/go.mod h1:Y+Yx5eoAFn32cQvJDxZx5Dpnq+c3wtXuadVZAcxbbBo=
