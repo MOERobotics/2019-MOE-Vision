@@ -51,7 +51,9 @@
     "electron-compile": "^6.4.4",
     "electron-devtools-installer": "^2.1.0",
     "electron-squirrel-startup": "^1.0.0",
-    "vue": "^2.1.7"
+    "uvc-control": "^1.0.2",
+    "vue": "^2.1.7",
+    "vue-slider-component": "^2.8.6"
   },
   "devDependencies": {
     "babel-plugin-transform-async-to-generator": "^6.24.1",
