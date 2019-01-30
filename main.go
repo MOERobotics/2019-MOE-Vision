@@ -1,10 +1,8 @@
 package main
 
 import (
-	"fmt"
 	"image"
 	"image/color"
-	"os"
 
 	"gocv.io/x/gocv"
 	"gonum.org/v1/gonum/stat"
@@ -132,10 +130,7 @@ type SlopeOffset struct {
 }
 
 func main() {
-	if len(os.Args) < 2 {
-		fmt.Println("How to run:\n\tfind-circles [imgfile]")
-		return
-	}
+	// start := time.Now()
 
 	// srcFileName := os.Args[1]
 
@@ -172,12 +167,11 @@ func main() {
 	trackBarGray := grayThresholdWindow.CreateTrackbar(TrackBarGray, 255)
 	trackBarGray.SetPos(245)
 
-	webcam, _ := gocv.OpenVideoCapture(1)
-	webcam.Set(gocv.VideoCaptureAutoExposure, 0)
-	webcam.Set(gocv.VideoCaptureContrast, 20)
-	webcam.Set(gocv.VideoCaptureAutoFocus, -1)
-
+	webcam, _ := gocv.OpenVideoCapture(0)
 	defer webcam.Close()
+
+	// webcam.Set(gocv.VideoCaptureFrameWidth, 320)
+	// webcam.Set(gocv.VideoCaptureFrameHeight, 240)
 
 	// srcImage := gocv.IMRead(srcFileName, gocv.IMReadColor)
 	srcImage := gocv.NewMat()
@@ -204,14 +198,26 @@ func main() {
 	contoursImage := gocv.NewMat()
 	defer contoursImage.Close()
 
+	// fmt.Println(time.Since(start))
+
 	for {
+		// start = time.Now()
 		webcam.Read(&srcImage)
+		// fmt.Println("WEBCAM READ IMAGE", time.Since(start))
+
+		// start = time.Now()
 		gocv.Resize(srcImage, &resizedSrcImage, image.Point{}, 0.5, 0.5, gocv.InterpolationLinear)
+		// fmt.Println("RESIZE", time.Since(start))
 
 		mainWindow.IMShow(resizedSrcImage)
 
+		// start = time.Now()
 		gocv.CvtColor(resizedSrcImage, &hlsImage, gocv.ColorBGRToHLS)
+		// fmt.Println("BGR TO HLS", time.Since(start))
+
+		// start = time.Now()
 		gocv.CvtColor(resizedSrcImage, &grayImage, gocv.ColorBGRToGray)
+		// fmt.Println("BGR TO GRAY", time.Since(start))
 
 		lowerHlsBound := gocv.Scalar{
 			Val1: 0,
@@ -247,7 +253,10 @@ func main() {
 		// bgrThresholdWindow.IMShow(bgrImageFiltered)
 		// grayThresholdWindow.IMShow(grayImageFiltered)
 
+		// start = time.Now()
 		contours := gocv.FindContours(grayImageFiltered, gocv.RetrievalExternal, gocv.ChainApproxSimple)
+		// fmt.Println("FIND CONTOURS", time.Since(start))
+
 		resizedSrcImage.CopyTo(&contoursImage)
 		contourColor := color.RGBA{0, 0, 255, 0}
 		centroidColor := color.RGBA{255, 0, 0, 0}
@@ -273,6 +282,8 @@ func main() {
 				gocv.Circle(&contoursImage, centroidPoint, 1, centroidColor, -1)
 
 				var lines [4]SlopeOffset
+
+				// start = time.Now()
 				for setIndex, points := range quadrilateralPoints(contour) {
 					xs := make([]float64, len(points))
 					ys := make([]float64, len(points))
@@ -303,6 +314,7 @@ func main() {
 						slope,
 					}
 				}
+				// fmt.Println("FIND LINES", time.Since(start))
 
 				gocv.Circle(&contoursImage, getIntersection(lines[0], lines[1]), 1, color1, -1)
 				gocv.Circle(&contoursImage, getIntersection(lines[1], lines[2]), 1, color1, -1)
@@ -313,7 +325,7 @@ func main() {
 
 		contourWindow.IMShow(contoursImage)
 
-		if mainWindow.WaitKey(10) >= 0 {
+		if mainWindow.WaitKey(33) >= 0 {
 			break
 		}
 	}
