@@ -32,7 +32,7 @@ You can use any editor to write Go code but [VS Code](https://code.visualstudio.
 
 ## Building
 
-To build `main.go` run `go build main.go`. This generates a `main` or `main.exe` executable. You can run this in Terminal with `./main` or in PowerShell `./main.exe`. When you run `go build` using recent versions of Go, it should pull in packages automatically using `go mod`.
+To build `2019-MOE-Vision.go` run `go build`. This generates a `2019-MOE-Vision` or `2019-MOE-Vision.exe` executable. You can run this in Terminal with `./2019-MOE-Vision` or in PowerShell `./2019-MOE-Vision.exe`. When you run `go build` using recent versions of Go, it should pull in packages automatically using `go mod`.
 
 ## Installing and Deployment
 
