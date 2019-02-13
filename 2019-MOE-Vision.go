@@ -130,50 +130,10 @@ type SlopeOffset struct {
 }
 
 func main() {
-	// start := time.Now()
-
-	// srcFileName := os.Args[1]
-
-	mainWindow := gocv.NewWindow(MainWindow)
-	defer mainWindow.Close()
-
-	grayThresholdWindow := gocv.NewWindow(GrayThresholdWindow)
-	defer grayThresholdWindow.Close()
-
-	hlsThresholdWindow := gocv.NewWindow(HlsThresholdWindow)
-	defer hlsThresholdWindow.Close()
-
-	bgrThresholdWindow := gocv.NewWindow(BgrThresholdWindow)
-	defer bgrThresholdWindow.Close()
-
-	contourWindow := gocv.NewWindow(ContourWindow)
-	defer contourWindow.Close()
-
-	outputWindow := gocv.NewWindow(OutputWindow)
-	defer outputWindow.Close()
-
-	trackBarHLS := hlsThresholdWindow.CreateTrackbar(TrackBarHLS, 255)
-	trackBarHLS.SetPos(240)
-
-	trackBarB := bgrThresholdWindow.CreateTrackbar(TrackBarB, 255)
-	trackBarB.SetPos(245)
-
-	trackBarG := bgrThresholdWindow.CreateTrackbar(TrackBarG, 255)
-	trackBarG.SetPos(245)
-
-	trackBarR := bgrThresholdWindow.CreateTrackbar(TrackBarR, 255)
-	trackBarR.SetPos(245)
-
-	trackBarGray := grayThresholdWindow.CreateTrackbar(TrackBarGray, 255)
-	trackBarGray.SetPos(245)
 
 	webcam, _ := gocv.OpenVideoCapture(0)
 	defer webcam.Close()
 
-	// webcam.Set(gocv.VideoCaptureFrameWidth, 320)
-	// webcam.Set(gocv.VideoCaptureFrameHeight, 240)
-
-	// srcImage := gocv.IMRead(srcFileName, gocv.IMReadColor)
 	srcImage := gocv.NewMat()
 	defer srcImage.Close()
 
@@ -198,30 +158,18 @@ func main() {
 	contoursImage := gocv.NewMat()
 	defer contoursImage.Close()
 
-	// fmt.Println(time.Since(start))
-
 	for {
-		// start = time.Now()
 		webcam.Read(&srcImage)
-		// fmt.Println("WEBCAM READ IMAGE", time.Since(start))
 
-		// start = time.Now()
 		gocv.Resize(srcImage, &resizedSrcImage, image.Point{}, 0.5, 0.5, gocv.InterpolationLinear)
-		// fmt.Println("RESIZE", time.Since(start))
 
-		mainWindow.IMShow(resizedSrcImage)
-
-		// start = time.Now()
 		gocv.CvtColor(resizedSrcImage, &hlsImage, gocv.ColorBGRToHLS)
-		// fmt.Println("BGR TO HLS", time.Since(start))
 
-		// start = time.Now()
 		gocv.CvtColor(resizedSrcImage, &grayImage, gocv.ColorBGRToGray)
-		// fmt.Println("BGR TO GRAY", time.Since(start))
 
 		lowerHlsBound := gocv.Scalar{
 			Val1: 0,
-			Val2: float64(trackBarHLS.GetPos()),
+			Val2: 0,
 			Val3: 0,
 			Val4: 0,
 		}
@@ -233,9 +181,9 @@ func main() {
 		}
 
 		lowerBgrBound := gocv.Scalar{
-			Val1: float64(trackBarB.GetPos()),
-			Val2: float64(trackBarG.GetPos()),
-			Val3: float64(trackBarR.GetPos()),
+			Val1: 0,
+			Val2: 0,
+			Val3: 0,
 			Val4: 0,
 		}
 		upperBgrBound := gocv.Scalar{
@@ -247,21 +195,14 @@ func main() {
 
 		gocv.InRangeWithScalar(hlsImage, lowerHlsBound, upperHlsBound, &hlsImageFiltered)
 		gocv.InRangeWithScalar(resizedSrcImage, lowerBgrBound, upperBgrBound, &bgrImageFiltered)
-		gocv.Threshold(grayImage, &grayImageFiltered, float32(trackBarGray.GetPos()), float32(255), gocv.ThresholdBinary)
+		gocv.Threshold(grayImage, &grayImageFiltered, 0, float32(255), gocv.ThresholdBinary)
 
-		// hlsThresholdWindow.IMShow(hlsImageFiltered)
-		// bgrThresholdWindow.IMShow(bgrImageFiltered)
-		// grayThresholdWindow.IMShow(grayImageFiltered)
-
-		// start = time.Now()
 		contours := gocv.FindContours(grayImageFiltered, gocv.RetrievalExternal, gocv.ChainApproxSimple)
-		// fmt.Println("FIND CONTOURS", time.Since(start))
 
 		resizedSrcImage.CopyTo(&contoursImage)
 		contourColor := color.RGBA{0, 0, 255, 0}
 		centroidColor := color.RGBA{255, 0, 0, 0}
 
-		// color0 := color.RGBA{255, 0, 0, 0}
 		color1 := color.RGBA{0, 255, 0, 0}
 		// color2 := color.RGBA{0, 0, 255, 0}
 		// color3 := color.RGBA{0, 255, 255, 0}
@@ -323,11 +264,11 @@ func main() {
 			}
 		}
 
-		contourWindow.IMShow(contoursImage)
+		// contourWindow.IMShow(contoursImage)
 
-		if mainWindow.WaitKey(33) >= 0 {
-			break
-		}
+		// if mainWindow.WaitKey(33) >= 0 {
+		// 	break
+		// }
 	}
 
 }
