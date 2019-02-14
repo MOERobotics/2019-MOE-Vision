@@ -1,8 +1,10 @@
 package main
 
 import (
+	"fmt"
 	"image"
 	"image/color"
+	"net"
 
 	"gocv.io/x/gocv"
 	"gonum.org/v1/gonum/stat"
@@ -98,6 +100,21 @@ type SlopeOffset struct {
 
 func main() {
 
+	ips, _ := net.LookupIP("robot-2019.local")
+
+	robotIP := []byte{}
+
+	for _, item := range ips {
+		if item.To4() != nil {
+			robotIP = item.To4()
+		} else {
+			fmt.Println("NOT IPV")
+		}
+	}
+
+	Conn, _ := net.DialUDP("udp", nil, &net.UDPAddr{IP: robotIP, Port: 5801, Zone: ""})
+	defer Conn.Close()
+
 	webcam, _ := gocv.OpenVideoCapture(0)
 	defer webcam.Close()
 
@@ -175,6 +192,8 @@ func main() {
 					int(contourCentroidX),
 					int(contourCentroidY),
 				}
+
+				Conn.Write([]byte(string(contourCentroidX)))
 
 				var lines [4]SlopeOffset
 
