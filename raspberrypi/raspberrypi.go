@@ -139,6 +139,9 @@ func main() {
 	andImage := gocv.NewMat()
 	defer andImage.Close()
 
+	bgrImageFiltered := gocv.NewMat()
+	defer bgrImageFiltered.Close()
+
 	for {
 		webcam.Read(&srcImage)
 
@@ -193,7 +196,7 @@ func main() {
 					int(contourCentroidY),
 				}
 
-				Conn.Write([]byte(string(contourCentroidX)))
+				Conn.Write([]byte(contourCentroidX))
 
 				var lines [4]SlopeOffset
 
