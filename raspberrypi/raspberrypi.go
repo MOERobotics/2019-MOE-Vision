@@ -3,8 +3,8 @@ package main
 import (
 	"fmt"
 	"image"
-	"image/color"
 	"net"
+	"time"
 
 	"gocv.io/x/gocv"
 	"gonum.org/v1/gonum/stat"
@@ -142,48 +142,64 @@ func main() {
 	bgrImageFiltered := gocv.NewMat()
 	defer bgrImageFiltered.Close()
 
+	rgbImageFiltered := gocv.NewMat()
+	defer rgbImageFiltered.Close()
+
+	// rgbImage := gocv.NewMat()
+	// defer rgbImageFiltered.Close()
+
 	for {
 		webcam.Read(&srcImage)
 
+		// lowerRGBBound := gocv.Scalar{
+		// 	Val1: 192,
+		// 	Val2: 240,
+		// 	Val3: 244,
+		// }
+		// upperRGBBound := gocv.Scalar{
+		// 	Val1: 194,
+		// 	Val2: 242,
+		// 	Val3: 246,
+		// }
 		gocv.CvtColor(srcImage, &hlsImage, gocv.ColorBGRToHLS)
 
 		gocv.CvtColor(srcImage, &grayImage, gocv.ColorBGRToGray)
 
 		lowerHlsBound := gocv.Scalar{
-			Val1: 0,
-			Val2: 0,
-			Val3: 0,
+			Val1: 68,
+			Val2: 211,
+			Val3: 46,
 			Val4: 0,
 		}
 		upperHlsBound := gocv.Scalar{
-			Val1: 255,
+			Val1: 127,
 			Val2: 255,
 			Val3: 255,
 			Val4: 0,
 		}
 
-		lowerBgrBound := gocv.Scalar{
-			Val1: 0,
-			Val2: 0,
-			Val3: 0,
-			Val4: 0,
-		}
-		upperBgrBound := gocv.Scalar{
-			Val1: 255,
-			Val2: 255,
-			Val3: 255,
-			Val4: 0,
-		}
+		// lowerBgrBound := gocv.Scalar{
+		// 	Val1: 192,
+		// 	Val2: 242,
+		// 	Val3: 247,
+		// 	Val4: 0,
+		// }
+		// upperBgrBound := gocv.Scalar{
+		// 	Val1: 194,
+		// 	Val2: 244,
+		// 	Val3: 249,
+		// 	Val4: 0,
+		// }
 
-		gocv.InRangeWithScalar(hlsImage, lowerHlsBound, upperHlsBound, &hlsImageFiltered)
-		gocv.InRangeWithScalar(srcImage, lowerBgrBound, upperBgrBound, &bgrImageFiltered)
+		gocv.InRangeWithScalar(hlsImage, lowerHlsBound, upperHlsBound, &grayImageFiltered)
+		// gocv.InRangeWithScalar(srcImage, lowerBgrBound, upperBgrBound, &bgrImageFiltered)
 		gocv.Threshold(grayImage, &grayImageFiltered, 0, float32(255), gocv.ThresholdBinary)
 
 		contours := gocv.FindContours(grayImageFiltered, gocv.RetrievalExternal, gocv.ChainApproxSimple)
 
-		color1 := color.RGBA{0, 255, 0, 0}
+		// color1 := color.RGBA{0, 255, 0, 0}
 
-		for index, contour := range contours {
+		for _, contour := range contours {
 			contourMoments := momentsFromContour(contour)
 
 			if contourMoments["m00"] > 300 {
@@ -191,13 +207,19 @@ func main() {
 				contourCentroidX := contourMoments["m10"] / contourMoments["m00"]
 				contourCentroidY := contourMoments["m01"] / contourMoments["m00"]
 
-				centroidPoint := image.Point{
-					int(contourCentroidX),
-					int(contourCentroidY),
-				}
+				// centroidPoint := image.Point{
+				// 		int(contourCentroidX),
+				// 		int(contourCentroidY),
+				// }
 
-				Conn.Write([]byte(contourCentroidX))
+				tee := time.Now()
+				fmt.Println(tee.Format(" "))
 
+				s := fmt.Sprintf("X: %f, Y: %f", contourCentroidX, contourCentroidY)
+				fmt.Println(s)
+
+				Conn.Write([]byte(s))
+				fmt.Println("It worked")
 				var lines [4]SlopeOffset
 
 				for setIndex, points := range quadrilateralPoints(contour) {
@@ -219,5 +241,4 @@ func main() {
 			}
 		}
 	}
-
 }
