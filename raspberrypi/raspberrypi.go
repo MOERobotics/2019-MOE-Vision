@@ -3,9 +3,12 @@ package main
 import (
 	"fmt"
 	"image"
+	"image/color"
 	"net"
+	"net/http"
 	"time"
 
+	"github.com/hybridgroup/mjpeg"
 	"gocv.io/x/gocv"
 	"gonum.org/v1/gonum/stat"
 )
@@ -99,8 +102,9 @@ type SlopeOffset struct {
 }
 
 func main() {
+	fmt.Println("Starting Go")
 
-	ips, _ := net.LookupIP("robot-2019.local")
+	ips, _ := net.LookupIP("Neels-MacBook-Air.local")
 
 	robotIP := []byte{}
 
@@ -118,84 +122,50 @@ func main() {
 	webcam, _ := gocv.OpenVideoCapture(0)
 	defer webcam.Close()
 
+	stream := mjpeg.NewStream()
+	http.Handle("/", stream)
+	go http.ListenAndServe("0.0.0.0:9696", nil)
+
 	srcImage := gocv.NewMat()
 	defer srcImage.Close()
-
-	hlsImage := gocv.NewMat()
-	defer hlsImage.Close()
-
-	grayImage := gocv.NewMat()
-	defer grayImage.Close()
-
-	hlsImageFiltered := gocv.NewMat()
-	defer hlsImageFiltered.Close()
-
-	grayImageFiltered := gocv.NewMat()
-	defer grayImageFiltered.Close()
 
 	contoursImage := gocv.NewMat()
 	defer contoursImage.Close()
 
-	andImage := gocv.NewMat()
-	defer andImage.Close()
-
 	bgrImageFiltered := gocv.NewMat()
 	defer bgrImageFiltered.Close()
 
-	rgbImageFiltered := gocv.NewMat()
-	defer rgbImageFiltered.Close()
+	bgrImage := gocv.NewMat()
+	defer bgrImage.Close()
 
-	// rgbImage := gocv.NewMat()
-	// defer rgbImageFiltered.Close()
+	BinaryImage := gocv.NewMat()
+	defer BinaryImage.Close()
+
+	streamedImage := gocv.NewMat()
+	defer streamedImage.Close()
 
 	for {
 		webcam.Read(&srcImage)
 
-		// lowerRGBBound := gocv.Scalar{
-		// 	Val1: 192,
-		// 	Val2: 240,
-		// 	Val3: 244,
-		// }
-		// upperRGBBound := gocv.Scalar{
-		// 	Val1: 194,
-		// 	Val2: 242,
-		// 	Val3: 246,
-		// }
-		gocv.CvtColor(srcImage, &hlsImage, gocv.ColorBGRToHLS)
+		srcImage.CopyTo(&streamedImage)
 
-		gocv.CvtColor(srcImage, &grayImage, gocv.ColorBGRToGray)
 
-		lowerHlsBound := gocv.Scalar{
-			Val1: 68,
-			Val2: 211,
-			Val3: 46,
+		lowerBgrBound := gocv.Scalar{
+			Val1: 190,
+			Val2: 240,
+			Val3: 240,
 			Val4: 0,
 		}
-		upperHlsBound := gocv.Scalar{
-			Val1: 127,
+		upperBgrBound := gocv.Scalar{
+			Val1: 255,
 			Val2: 255,
 			Val3: 255,
 			Val4: 0,
 		}
 
-		// lowerBgrBound := gocv.Scalar{
-		// 	Val1: 192,
-		// 	Val2: 242,
-		// 	Val3: 247,
-		// 	Val4: 0,
-		// }
-		// upperBgrBound := gocv.Scalar{
-		// 	Val1: 194,
-		// 	Val2: 244,
-		// 	Val3: 249,
-		// 	Val4: 0,
-		// }
+		gocv.InRangeWithScalar(srcImage, lowerBgrBound, upperBgrBound, &BinaryImage)
 
-		gocv.InRangeWithScalar(hlsImage, lowerHlsBound, upperHlsBound, &grayImageFiltered)
-		// gocv.InRangeWithScalar(srcImage, lowerBgrBound, upperBgrBound, &bgrImageFiltered)
-		gocv.Threshold(grayImage, &grayImageFiltered, 0, float32(255), gocv.ThresholdBinary)
-
-		contours := gocv.FindContours(grayImageFiltered, gocv.RetrievalExternal, gocv.ChainApproxSimple)
+		contours := gocv.FindContours(BinaryImage, gocv.RetrievalExternal, gocv.ChainApproxSimple)
 
 		// color1 := color.RGBA{0, 255, 0, 0}
 
@@ -207,27 +177,32 @@ func main() {
 				contourCentroidX := contourMoments["m10"] / contourMoments["m00"]
 				contourCentroidY := contourMoments["m01"] / contourMoments["m00"]
 
-				// centroidPoint := image.Point{
-				// 		int(contourCentroidX),
-				// 		int(contourCentroidY),
-				// }
+				centroidPoint := image.Point{
+					int(contourCentroidX),
+					int(contourCentroidY),
+				}
 
 				tee := time.Now()
 				fmt.Println(tee.Format(" "))
 
 				s := fmt.Sprintf("X: %f, Y: %f", contourCentroidX, contourCentroidY)
 				fmt.Println(s)
-
 				Conn.Write([]byte(s))
 				fmt.Println("It worked")
 				var lines [4]SlopeOffset
+
+
+				color1 := color.RGBA{0, 255, 0, 0}
+
+				gocv.Circle(&streamedImage, centroidPoint, 1, color1, -1)
+				buf, _ := gocv.IMEncode(".jpg", streamedImage)
+		                stream.UpdateJPEG(buf)
 
 				for setIndex, points := range quadrilateralPoints(contour) {
 					xs := make([]float64, len(points))
 					ys := make([]float64, len(points))
 
 					for subIndex, point := range points {
-
 						xs[subIndex] = float64(point.X)
 						ys[subIndex] = float64(point.Y)
 					}
