@@ -1,11 +1,12 @@
+github.com/hybridgroup/mjpeg v0.0.0-20140228234708-4680f319790e h1:xCcwD5FOXul+j1dn8xD16nbrhJkkum/Cn+jTd/u1LhY=
+github.com/hybridgroup/mjpeg v0.0.0-20140228234708-4680f319790e/go.mod h1:eagM805MRKrioHYuU7iKLUyFPVKqVV6um5DAvCkUtXs=
 gocv.io/x/gocv v0.18.0 h1:uW6C5ZjvEZjW+SwHtObmIWH73xNSsUXtSR26+k7OHpA=
 gocv.io/x/gocv v0.18.0/go.mod h1:3qacsKAMRS0sZmeLySWcbFeVEU3t86igWaQleAgiuBg=
+gocv.io/x/gocv v0.19.0 h1:S/V3wt7n6XD1IiLNutMunyoMhL9kkZ/5hFhrTrqNBUI=
+gocv.io/x/gocv v0.19.0/go.mod h1:3qacsKAMRS0sZmeLySWcbFeVEU3t86igWaQleAgiuBg=
 golang.org/x/exp v0.0.0-20180321215751-8460e604b9de/go.mod h1:CJ0aWSM057203Lf6IL+f9T1iT9GByDxfZKAQTCR3kQA=
 golang.org/x/exp v0.0.0-20190125153040-c74c464bbbf2/go.mod h1:CJ0aWSM057203Lf6IL+f9T1iT9GByDxfZKAQTCR3kQA=
 golang.org/x/tools v0.0.0-20180525024113-a5b4c53f6e8b/go.mod h1:n7NCudcB/nEzxVGmLbDWY5pfWTLqBcC2KZ6jyYvM4mQ=
 golang.org/x/tools v0.0.0-20190130015043-a06a922acc1b/go.mod h1:n7NCudcB/nEzxVGmLbDWY5pfWTLqBcC2KZ6jyYvM4mQ=
-golang.org/x/tools v0.0.0-20190206041539-40960b6deb8e/go.mod h1:n7NCudcB/nEzxVGmLbDWY5pfWTLqBcC2KZ6jyYvM4mQ=
 gonum.org/v1/gonum v0.0.0-20190128093212-dca16df66688 h1:j6pyw+/NJNGHo6/As+UFtTckA2u7Ex2oNieq1fZ9VVE=
 gonum.org/v1/gonum v0.0.0-20190128093212-dca16df66688/go.mod h1:Y+Yx5eoAFn32cQvJDxZx5Dpnq+c3wtXuadVZAcxbbBo=
-gonum.org/v1/gonum v0.0.0-20190214002023-66532af93a71 h1:cxmhs5PBtzWhu/2oOpH61/i+uQVO8/4xytnyVxo1Iac=
-gonum.org/v1/gonum v0.0.0-20190214002023-66532af93a71/go.mod h1:jevfED4GnIEnJrWW55YmY9DMhajHcnkqVnEXmEtMyNI=

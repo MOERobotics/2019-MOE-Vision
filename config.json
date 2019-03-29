@@ -1,0 +1,1 @@
+{ "port": 9001, "device": "/dev/video2", "fps": 20, "width": 360, "height": 240, "bitrate": "600K", "verbose": false }
